@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ru" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Орлов — Frontend, выпуск №05</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0518;
+    --bg-alt:#150a2b;
+    --ink:#f6f1ff;
+    --muted:#a99bd9;
+    --line:rgba(246,241,255,.14);
+    --pink:#ff3fb0;
+    --violet:#8b5cf6;
+    --cyan:#21e6ff;
+    --grad: linear-gradient(100deg, var(--pink), var(--violet) 55%, var(--cyan));
+  }
+  :root[data-theme="light"]{
+    --bg:#fbf7ff;
+    --bg-alt:#f1e9ff;
+    --ink:#170b2e;
+    --muted:#6a5c95;
+    --line:rgba(23,11,46,.14);
+    --pink:#e6199a;
+    --violet:#7c3aed;
+    --cyan:#0098b3;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    transition:background .3s ease, color .3s ease;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; margin:0; font-weight:600;}
+  a{color:inherit;}
+  p{margin:0;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+
+  .grad-text{
+    background:var(--grad);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    padding:26px 40px;
+    border-bottom:1px solid var(--line);
+  }
+  .mast-left{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:21px;
+    letter-spacing:.01em;
+    text-decoration:none;
+    color:var(--ink);
+  }
+  .issue{font-size:13px;color:var(--muted);}
+  .controls{display:flex;gap:22px;}
+  .ctrl-btn{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-family:'Manrope', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    padding:4px 0;
+    position:relative;
+  }
+  .ctrl-btn::after{
+    content:'';
+    position:absolute;left:0;bottom:0;
+    width:0;height:1px;
+    background:var(--grad);
+    transition:width .25s ease;
+  }
+  .ctrl-btn:hover{color:var(--ink);}
+  .ctrl-btn:hover::after{width:100%;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.6fr 1fr;
+    gap:60px;
+    padding:88px 40px 96px;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    top:-220px; right:-160px;
+    width:560px; height:560px;
+    background:radial-gradient(circle, var(--pink), transparent 62%);
+    filter:blur(90px);
+    opacity:.35;
+    z-index:0;
+    animation:blobMove 20s ease-in-out infinite alternate;
+  }
+  @keyframes blobMove{ from{transform:translate(0,0) scale(1);} to{transform:translate(-50px,40px) scale(1.18);} }
+  @media (prefers-reduced-motion: reduce){ .hero::before{animation:none;} }
+
+  .hero-headline{position:relative;z-index:1;}
+  .hero-headline h1{
+    font-weight:600;
+    font-size:clamp(46px, 8vw, 116px);
+    line-height:.98;
+  }
+  .hero-headline .line{
+    display:block;
+    opacity:0;
+    transform:translateY(24px);
+    animation:lineIn .7s ease forwards;
+  }
+  .hero-headline .line:nth-child(1){animation-delay:.05s;}
+  .hero-headline .line:nth-child(2){margin-left:clamp(18px,4vw,60px); animation-delay:.18s;}
+  .hero-headline .line:nth-child(3){margin-left:clamp(36px,8vw,120px); animation-delay:.31s;}
+  @keyframes lineIn{ to{opacity:1; transform:none;} }
+  @media (prefers-reduced-motion: reduce){ .hero-headline .line{animation:none; opacity:1; transform:none;} }
+
+  .hero-side{
+    position:relative; z-index:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:22px;
+  }
+  .hero-side blockquote{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(17px,1.7vw,21px);
+    line-height:1.55;
+    margin:0;
+    padding-left:20px;
+    border-left:2px solid var(--line);
+  }
+  .status-row{display:flex; align-items:center; gap:10px;}
+  .pulse{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 0 0 color-mix(in srgb, var(--cyan) 55%, transparent);
+    animation:pulse 2.6s ease-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .pulse{animation:none;} }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--cyan) 50%, transparent);}
+    70%{box-shadow:0 0 0 11px color-mix(in srgb, var(--cyan) 0%, transparent);}
+    100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--cyan) 0%, transparent);}
+  }
+  .status-row .headline{font-size:15px; font-weight:600;}
+  .loc{font-size:14px; color:var(--muted);}
+  .hero-cta{display:flex; gap:26px; flex-wrap:wrap; margin-top:6px;}
+  .hero-cta a{
+    font-family:'Manrope', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    text-decoration:none;
+    position:relative;
+    padding-bottom:3px;
+  }
+  .hero-cta a::after{
+    content:'';
+    position:absolute; left:0; bottom:0;
+    width:100%; height:2px;
+    background:var(--grad);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+  }
+  .hero-cta a:hover::after{transform:scaleX(1);}
+
+  /* ---------- shared section chrome ---------- */
+  section{padding:64px 40px; border-top:1px solid var(--line);}
+  .section-head{display:flex; align-items:baseline; gap:16px; margin-bottom:44px;}
+  .section-num{font-family:'Fraunces', serif; font-size:14px; color:var(--muted);}
+  .section-head h2{font-size:clamp(28px,4vw,42px);}
+
+  /* ---------- toc ---------- */
+  .toc{max-width:680px;}
+  .toc-kicker{font-size:14px; color:var(--muted); margin-bottom:26px;}
+  .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .toc li a{
+    display:flex; align-items:baseline;
+    text-decoration:none; color:var(--ink);
+    font-family:'Fraunces', serif;
+    font-size:clamp(22px,3.2vw,32px);
+    padding:8px 0;
+  }
+  .leader{flex:1; border-bottom:1px dotted var(--line); margin:0 14px; position:relative; top:-9px;}
+  .toc .num{font-family:'Manrope', sans-serif; font-size:14px; color:var(--muted); font-weight:600;}
+  .toc li a:hover{color:var(--pink);}
+
+  /* ---------- work ---------- */
+  .feature{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:32px;
+    align-items:start;
+    padding:44px 0;
+    border-top:1px solid var(--line);
+  }
+  .feature:first-of-type{border-top:none; padding-top:0;}
+  .feature-b{grid-template-columns:1fr 220px;}
+  .ghost-num{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(56px,9vw,132px);
+    line-height:1;
+    background:var(--grad);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    opacity:.32;
+  }
+  .feature-b .ghost-num{text-align:right;}
+  .feature-body h3{font-size:clamp(26px,4vw,38px); margin-bottom:6px;}
+  .feature-body .meta{font-size:13px; color:var(--muted); margin-bottom:16px;}
+  .feature-body p.desc{font-size:16px; line-height:1.65; max-width:58ch; margin-bottom:14px;}
+  .feature-body .stack{font-size:13px; color:var(--muted);}
+  .feature-b .feature-body{text-align:right;}
+  .feature-b .feature-body p.desc{margin-left:auto;}
+
+  /* ---------- tools ---------- */
+  .tool-cloud{display:flex; flex-wrap:wrap; gap:14px 30px; font-family:'Fraunces', serif;}
+  .tool{color:var(--ink);}
+  .tool.w5{font-size:clamp(26px,3vw,38px); font-weight:700;}
+  .tool.w4{font-size:clamp(21px,2.4vw,29px); font-weight:600;}
+  .tool.w3{font-size:clamp(18px,2vw,24px); font-weight:500;}
+  .tool.w2{font-size:clamp(16px,1.7vw,20px); font-weight:500; color:var(--muted);}
+
+  /* ---------- notes ---------- */
+  .note-list{list-style:none; margin:0; padding:0;}
+  .note-list li{border-top:1px solid var(--line); padding:20px 0;}
+  .note-list li:first-child{border-top:none; padding-top:0;}
+  .note-list a{
+    display:flex; align-items:baseline; gap:14px;
+    text-decoration:none; color:var(--ink);
+  }
+  .note-list .title{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:500;
+    font-size:clamp(18px,2.4vw,23px);
+  }
+  .note-list .date{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .note-list a:hover .title{color:var(--pink);}
+
+  /* ---------- contact ---------- */
+  .contact-big{font-size:clamp(46px,8vw,92px); margin-bottom:26px;}
+  .contact-para{font-size:16px; line-height:1.65; color:var(--muted); max-width:52ch; margin-bottom:34px;}
+  .contact-links{display:flex; flex-direction:column; gap:14px; align-items:flex-start;}
+  .contact-links a{
+    font-family:'Fraunces', serif;
+    font-size:clamp(19px,3vw,26px);
+    text-decoration:none;
+    color:var(--ink);
+    position:relative;
+    padding-bottom:2px;
+  }
+  .contact-links a::after{
+    content:'';
+    position:absolute; left:0; bottom:0;
+    width:100%; height:2px;
+    background:var(--grad);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+  }
+  .contact-links a:hover::after{transform:scaleX(1);}
+
+  /* ---------- colophon ---------- */
+  .colophon{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    padding:26px 40px;
+    border-top:1px solid var(--line);
+    font-size:13px; color:var(--muted);
+  }
+
+  @media (max-width:860px){
+    .masthead, .hero, section, .colophon{padding-left:22px; padding-right:22px;}
+    .hero{grid-template-columns:1fr; padding-top:64px;}
+    .hero::before{width:360px; height:360px; top:-140px; right:-120px;}
+    .feature, .feature-b{grid-template-columns:1fr;}
+    .feature-b .feature-body, .feature-b .ghost-num{text-align:left;}
+    .feature-b .feature-body p.desc{margin-left:0;}
+    .ghost-num{font-size:56px; opacity:.28;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-left">
+    <a class="wordmark" href="#top">Орлов</a>
+    <span class="issue" data-i18n="issue">Фронтенд, выпуск №05</span>
+  </div>
+  <nav class="controls">
+    <button class="ctrl-btn" id="langToggle" aria-label="Switch language"><span id="langLabel">EN</span></button>
+    <button class="ctrl-btn" id="themeToggle" aria-label="Toggle theme"><span id="themeLabel" data-i18n="themeLight">светлая</span></button>
+  </nav>
+</header>
+
+<section class="hero" id="top" style="border-top:none;">
+  <div class="hero-headline">
+    <h1 class="grad-text">
+      <span class="line" data-i18n="h1a">Интерфейсы</span><span class="line" data-i18n="h1b">без</span><span class="line" data-i18n="h1c">тормозов</span>
+    </h1>
+  </div>
+  <div class="hero-side">
+    <blockquote data-i18n="quote">Пять лет собираю продуктовые интерфейсы для аналитики, финтеха и внутренних инструментов — от макета до продакшена, включая то, что обычно достаётся бэкенду.</blockquote>
+    <div class="status-row">
+      <span class="pulse"></span>
+      <span class="headline" data-i18n="statusHeadline">Свободен с 12 октября</span>
+    </div>
+    <div class="loc" data-i18n="loc">Днепр, удалённо, UTC+3</div>
+    <div class="hero-cta">
+      <a href="#work" data-i18n="ctaWork">К работам</a>
+      <a href="#contact" data-i18n="ctaContact">Написать</a>
+    </div>
+  </div>
+</section>
+
+<section class="toc">
+  <div class="toc-kicker" data-i18n="tocHeading">В этом выпуске</div>
+  <ol>
+    <li><a href="#work"><span data-i18n="tocWork">Работы</span><span class="leader"></span><span class="num">01</span></a></li>
+    <li><a href="#tools"><span data-i18n="tocTools">Инструменты</span><span class="leader"></span><span class="num">02</span></a></li>
+    <li><a href="#notes"><span data-i18n="tocNotes">Заметки</span><span class="leader"></span><span class="num">03</span></a></li>
+    <li><a href="#contact"><span data-i18n="tocContact">Контакты</span><span class="leader"></span><span class="num">04</span></a></li>
+  </ol>
+</section>
+
+<section id="work">
+  <div class="section-head"><span class="section-num">01</span><h2 data-i18n="workHeading">Работы</h2></div>
+
+  <article class="feature">
+    <span class="ghost-num">01</span>
+    <div class="feature-body">
+      <h3>Nimbus</h3>
+      <p class="meta" data-i18n="p1meta">Продукт, 2025</p>
+      <p class="desc" data-i18n="p1desc">Дэшборд аналитики на 40 000+ событий в день. Переписал рендер таблиц на виртуализации — отклик упал с 900 мс до 60 мс.</p>
+      <p class="stack">React, TypeScript, D3</p>
+    </div>
+  </article>
+
+  <article class="feature feature-b">
+    <div class="feature-body">
+      <h3>Fielddesk</h3>
+      <p class="meta" data-i18n="p2meta">Продукт, 2024</p>
+      <p class="desc" data-i18n="p2desc">CRM для выездных бригад с офлайн-режимом: заявки, маршруты и фото синхронизируются, как только возвращается связь.</p>
+      <p class="stack">Vue, Pinia, IndexedDB</p>
+    </div>
+    <span class="ghost-num">02</span>
+  </article>
+</section>
+
+<section id="tools">
+  <div class="section-head"><span class="section-num">02</span><h2 data-i18n="toolsHeading">Инструменты</h2></div>
+  <p class="tool-cloud">
+    <span class="tool w3" data-i18n="tool1">React / Next.js, 3 года</span>
+    <span class="tool w4" data-i18n="tool2">TypeScript, 4 года</span>
+    <span class="tool w2" data-i18n="tool3">Vue 3, 2 года</span>
+    <span class="tool w3" data-i18n="tool4">Node / tRPC, 3 года</span>
+    <span class="tool w5" data-i18n="tool5">Figma в код, 5 лет</span>
+  </p>
+</section>
+
+<section id="notes">
+  <div class="section-head"><span class="section-num">03</span><h2 data-i18n="notesHeading">Заметки</h2></div>
+  <ul class="note-list">
+    <li><a href="#"><span class="title" data-i18n="note1">Почему я перестал использовать Redux в новых проектах</span><span class="leader"></span><span class="date" data-i18n="date1">авг 2026</span></a></li>
+    <li><a href="#"><span class="title" data-i18n="note2">Виртуализация списков на 50 тысяч строк: разбор на примере Nimbus</span><span class="leader"></span><span class="date" data-i18n="date2">май 2026</span></a></li>
+    <li><a href="#"><span class="title" data-i18n="note3">Offline-first без боли: паттерны синхронизации, которые держатся</span><span class="leader"></span><span class="date" data-i18n="date3">фев 2026</span></a></li>
+  </ul>
+</section>
+
+<section id="contact">
+  <div class="section-head"><span class="section-num">04</span><h2 data-i18n="contactHeading2">Контакты</h2></div>
+  <h3 class="contact-big grad-text" data-i18n="contactBig">Пишите.</h3>
+  <p class="contact-para" data-i18n="contactPara">Отвечаю в течение дня. Пишите сразу с деталями задачи — так быстрее пойму, подхожу ли я.</p>
+  <div class="contact-links">
+    <a href="mailto:orlov.dev@example.com">orlov.dev@example.com</a>
+    <a href="https://github.com/example" target="_blank" rel="noopener">github.com/example</a>
+    <a href="https://t.me/example" target="_blank" rel="noopener">t.me/example</a>
+  </div>
+</section>
+
+<footer class="colophon">
+  <span data-i18n="footerLeft">Выпуск №05, 2026, Орлов</span>
+  <span data-i18n="footerRight">Портфолио на HTML, CSS и JS</span>
+</footer>
+
+<script>
+(function(){
+  var dict = {
+    issue:            { ru:"Фронтенд, выпуск №05", en:"Frontend, issue №05" },
+    h1a:              { ru:"Интерфейсы", en:"Interfaces" },
+    h1b:              { ru:"без", en:"that don't" },
+    h1c:              { ru:"тормозов", en:"lag" },
+    quote:            { ru:"Пять лет собираю продуктовые интерфейсы для аналитики, финтеха и внутренних инструментов — от макета до продакшена, включая то, что обычно достаётся бэкенду.", en:"Five years building product interfaces for analytics, fintech and internal tools — from design file to production, including the parts usually left to backend." },
+    statusHeadline:   { ru:"Свободен с 12 октября", en:"Open from October 12" },
+    loc:              { ru:"Днепр, удалённо, UTC+3", en:"Dnipro, remote, UTC+3" },
+    ctaWork:          { ru:"К работам", en:"See the work" },
+    ctaContact:       { ru:"Написать", en:"Get in touch" },
+    tocHeading:       { ru:"В этом выпуске", en:"In this issue" },
+    tocWork:          { ru:"Работы", en:"Work" },
+    tocTools:         { ru:"Инструменты", en:"Toolkit" },
+    tocNotes:         { ru:"Заметки", en:"Notes" },
+    tocContact:       { ru:"Контакты", en:"Contact" },
+    workHeading:      { ru:"Работы", en:"Work" },
+    p1meta:           { ru:"Продукт, 2025", en:"Product, 2025" },
+    p1desc:           { ru:"Дэшборд аналитики на 40 000+ событий в день. Переписал рендер таблиц на виртуализации — отклик упал с 900 мс до 60 мс.", en:"An analytics dashboard handling 40,000+ daily events. Rewrote table rendering with virtualization, cutting response time from 900ms to 60ms." },
+    p2meta:           { ru:"Продукт, 2024", en:"Product, 2024" },
+    p2desc:           { ru:"CRM для выездных бригад с офлайн-режимом: заявки, маршруты и фото синхронизируются, как только возвращается связь.", en:"A CRM for field crews with offline mode: requests, routes and photos sync automatically once connection returns." },
+    toolsHeading:     { ru:"Инструменты", en:"Toolkit" },
+    tool1:            { ru:"React / Next.js, 3 года", en:"React / Next.js, 3 years" },
+    tool2:            { ru:"TypeScript, 4 года", en:"TypeScript, 4 years" },
+    tool3:            { ru:"Vue 3, 2 года", en:"Vue 3, 2 years" },
+    tool4:            { ru:"Node / tRPC, 3 года", en:"Node / tRPC, 3 years" },
+    tool5:            { ru:"Figma в код, 5 лет", en:"Figma to code, 5 years" },
+    notesHeading:     { ru:"Заметки", en:"Notes" },
+    note1:            { ru:"Почему я перестал использовать Redux в новых проектах", en:"Why I stopped reaching for Redux on new projects" },
+    date1:            { ru:"авг 2026", en:"Aug 2026" },
+    note2:            { ru:"Виртуализация списков на 50 тысяч строк: разбор на примере Nimbus", en:"Virtualizing 50k-row lists: a walkthrough from Nimbus" },
+    date2:            { ru:"май 2026", en:"May 2026" },
+    note3:            { ru:"Offline-first без боли: паттерны синхронизации, которые держатся", en:"Offline-first without the pain: sync patterns that hold up" },
+    date3:            { ru:"фев 2026", en:"Feb 2026" },
+    contactHeading2:  { ru:"Контакты", en:"Contact" },
+    contactBig:       { ru:"Пишите.", en:"Write in." },
+    contactPara:      { ru:"Отвечаю в течение дня. Пишите сразу с деталями задачи — так быстрее пойму, подхожу ли я.", en:"I reply within a day. Send project details up front — it helps me tell quickly whether I'm a good fit." },
+    footerLeft:       { ru:"Выпуск №05, 2026, Орлов", en:"Issue №05, 2026, Orlov" },
+    footerRight:      { ru:"Портфолио на HTML, CSS и JS", en:"Portfolio in HTML, CSS and JS" },
+    themeDark:        { ru:"тёмная", en:"dark" },
+    themeLight:       { ru:"светлая", en:"light" }
+  };
+
+  var root = document.documentElement;
+  var langBtn = document.getElementById('langToggle');
+  var langLabel = document.getElementById('langLabel');
+  var themeBtn = document.getElementById('themeToggle');
+  var themeLabel = document.getElementById('themeLabel');
+
+  var currentLang = 'ru';
+  var savedLang = null, savedTheme = null;
+  try { savedLang = localStorage.getItem('portfolio2-lang'); } catch(e) {}
+  try { savedTheme = localStorage.getItem('portfolio2-theme'); } catch(e) {}
+
+  function applyLang(lang){
+    currentLang = lang;
+    root.setAttribute('lang', lang);
+    langLabel.textContent = (lang === 'ru') ? 'EN' : 'RU';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if (dict[key]) el.textContent = dict[key][lang];
+    });
+    var isLight = root.getAttribute('data-theme') === 'light';
+    themeLabel.textContent = dict[isLight ? 'themeDark' : 'themeLight'][lang];
+  }
+
+  function applyTheme(theme){
+    if (theme === 'light'){ root.setAttribute('data-theme','light'); }
+    else { root.removeAttribute('data-theme'); }
+    themeLabel.textContent = dict[theme === 'light' ? 'themeDark' : 'themeLight'][currentLang];
+  }
+
+  applyLang(savedLang === 'en' ? 'en' : 'ru');
+  applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+
+  langBtn.addEventListener('click', function(){
+    var next = currentLang === 'ru' ? 'en' : 'ru';
+    applyLang(next);
+    try { localStorage.setItem('portfolio2-lang', next); } catch(e) {}
+  });
+
+  themeBtn.addEventListener('click', function(){
+    var isLight = root.getAttribute('data-theme') === 'light';
+    var next = isLight ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('portfolio2-theme', next); } catch(e) {}
+  });
+})();
+</script>
+</body>
+</html>
